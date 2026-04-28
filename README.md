@@ -4,7 +4,12 @@
   <img src="./assets/ANZAZ.png" alt="ANZAZ promotional poster" width="700"/>
 </p>
 
-By **Aya Alami**, **Nizar El Ghanbaz**, **Zyad Serghini**
+<video width="100%" autoplay muted loop playsinline>
+  <source src="./assets/video_demo.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+By [**Aya Alami**](https://github.com/ayaa14?), [**Nizar El Ghanbaz**](https://github.com/Zyssalone), [**Zyad Serghini**](https://github.com/ZyadSerghini)
 
 ## Table of Contents
 
