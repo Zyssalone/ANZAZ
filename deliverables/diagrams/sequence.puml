@@ -1,0 +1,44 @@
+@startuml
+title ANZAZ - Sequence Diagram (Identify & Record Species with alt)
+
+actor User
+participant "Mobile App" as App
+participant "Backend Server" as Backend
+participant "Image Recognition API" as AI
+database "Database" as DB
+
+' Step 1: User captures photo
+User -> App : Capture Photo
+
+' Step 2: App sends image to backend
+App -> Backend : Send Image + GPS Data
+
+' Step 3: Backend calls AI service
+Backend -> AI : Analyze Image
+
+' Step 4: AI returns result
+AI --> Backend : Analysis Result
+
+' Alternative flows
+alt Species Identified
+    ' Save observation
+    Backend -> DB : Save Observation
+    
+    ' Calculate rewards
+    Backend -> Backend : Calculate Points
+    
+    ' Send result to app
+    Backend --> App : Species Info + Points
+    
+    ' Display to user
+    App --> User : Show Species Info + Rewards
+
+else Species NOT Identified
+    ' Send failure response
+    Backend --> App : Identification Failed
+    
+    ' Inform user
+    App --> User : Show Error / Retry Option
+end
+
+@enduml

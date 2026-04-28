@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ANZAZ - Low-Fidelity Wireframes</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Architects+Daughter&family=Inter:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #e8e4df;
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .app-header {
+    background: #fff;
+    border-bottom: 2px solid #ccc;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .app-header h1 {
+    font-family: 'Architects Daughter', cursive;
+    font-size: 22px;
+    color: #333;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .app-header span {
+    font-size: 13px;
+    color: #888;
+    font-style: italic;
+  }
+
+  .tabs {
+    display: flex;
+    gap: 6px;
+    padding: 12px 16px;
+    overflow-x: auto;
+    background: #f5f2ed;
+    border-bottom: 1px solid #ddd;
+    position: sticky;
+    top: 54px;
+    z-index: 99;
+  }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #bbb;
+    background: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+  }
+  .tab:hover { border-color: #888; }
+  .tab.active { background: #333; color: #fff; border-color: #333; }
+
+  .phone-viewport {
+    display: flex;
+    justify-content: center;
+    padding: 32px 16px 60px;
+  }
+  .phone {
+    width: 390px;
+    height: 844px;
+    background: #fff;
+    border-radius: 40px;
+    border: 3px solid #888;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15), inset 0 0 0 1px rgba(0,0,0,0.05);
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 150px;
+    height: 28px;
+    background: #333;
+    border-radius: 0 0 18px 18px;
+    z-index: 10;
+  }
+
+  .status-bar {
+    height: 50px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding: 0 28px 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #333;
+  }
+  .status-icons { display: flex; gap: 6px; align-items: center; }
+
+  .screen { height: 730px; overflow-y: auto; position: relative; }
+  .screen::-webkit-scrollbar { width: 3px; }
+  .screen::-webkit-scrollbar-thumb { background: #ccc; border-radius: 3px; }
+
+  .bottom-nav {
+    height: 64px;
+    border-top: 1.5px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background: #fff;
+  }
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 10px;
+    color: #999;
+    cursor: pointer;
+  }
+  .nav-item.active { color: #2d8a4e; }
+
+  .wf-box {
+    background: #f0edea;
+    border: 1.5px dashed #ccc;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+    font-size: 12px;
+    font-family: 'Architects Daughter', cursive;
+  }
+  .wf-button {
+    border-radius: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 15px;
+    cursor: default;
+    gap: 8px;
+  }
+  .wf-button.primary { background: #2d8a4e; color: #fff; }
+  .wf-button.secondary { background: transparent; border: 2px solid #2d8a4e; color: #2d8a4e; }
+  .wf-input {
+    border: 1.5px solid #ddd;
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 14px;
+    color: #bbb;
+    background: #fafafa;
+  }
+  .wf-card {
+    background: #fff;
+    border: 1.5px solid #e0e0e0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .wf-header-bar {
+    background: #2d8a4e;
+    color: #fff;
+    padding: 16px 20px;
+  }
+  .wf-section-title {
+    font-weight: 600;
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 10px;
+  }
+  .wf-annotation {
+    position: absolute;
+    background: #fffde0;
+    border: 1px solid #e6d96c;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 10px;
+    font-family: 'Architects Daughter', cursive;
+    color: #8a7a00;
+    transform: rotate(-2deg);
+    z-index: 5;
+    pointer-events: none;
+  }
+
+  .progress-bg { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #2d8a4e; border-radius: 4px; }
+
+  .badge-item {
+    width: 56px; height: 56px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .badge-item.earned { background: #e8f5e9; border: 2px solid #2d8a4e; }
+  .badge-item.locked { background: #f0f0f0; border: 2px dashed #ccc; opacity: 0.5; }
+
+  .all-screens {
+    display: flex; flex-wrap: wrap; gap: 40px;
+    justify-content: center; padding: 32px 16px 60px;
+  }
+  .screen-wrapper { text-align: center; }
+  .screen-wrapper .label {
+    font-family: 'Architects Daughter', cursive;
+    font-size: 14px; color: #666; margin-top: 10px;
+  }
+  .phone.mini { width: 260px; height: 563px; }
+  .phone.mini::before { width: 100px; height: 20px; border-radius: 0 0 12px 12px; }
+  .phone.mini .status-bar { height: 36px; padding: 0 18px 4px; font-size: 10px; }
+  .phone.mini .screen { height: 480px; }
+  .phone.mini .bottom-nav { height: 47px; }
+  .phone.mini .nav-item { font-size: 8px; }
+
+  .view-toggle { display: flex; gap: 4px; background: #eee; border-radius: 8px; padding: 3px; }
+  .view-btn {
+    padding: 6px 14px; border-radius: 6px; border: none;
+    font-size: 12px; font-weight: 500; cursor: pointer;
+    background: transparent; color: #666; font-family: 'Inter', sans-serif;
+  }
+  .view-btn.active { background: #fff; color: #333; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+  .lc { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; }
+  .lc svg { stroke-linecap: round; stroke-linejoin: round; fill: none; }
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1><span class="lc"><svg width="18" height="18" viewBox="0 0 24 24" stroke="#333" stroke-width="1.75" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></svg></span> ANZAZ Wireframes</h1>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span>Low-Fidelity &bull; 8 Screens</span>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="setView('single')">Single</button>
+      <button class="view-btn" onclick="setView('all')">All Screens</button>
+    </div>
+  </div>
+</div>
+
+<div class="tabs" id="tabs"></div>
+
+<div id="single-view" class="phone-viewport">
+  <div class="phone" id="phone"></div>
+</div>
+
+<div id="all-view" class="all-screens" style="display:none;"></div>
+
+<script>
+// ========== LUCIDE SVG ICON SYSTEM ==========
+const ICON_PATHS = {
+  'home': '<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  'map': '<path d="m3 7 6-3 6 3 6-3v13l-6 3-6-3-6 3Z"/><path d="M9 4v13"/><path d="M15 7v13"/>',
+  'camera': '<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/>',
+  'book-open': '<path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>',
+  'user': '<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+  'leaf': '<path d="M11 20A7 7 0 0 1 9.8 6.9C15.5 4.9 17 3.5 19 2c1 2 2 4.5 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  'tree-pine': '<path d="m17 14 3 3.3a1 1 0 0 1-.7 1.7H4.7a1 1 0 0 1-.7-1.7L7 14h-.3a1 1 0 0 1-.7-1.7L9 9h-.2A1 1 0 0 1 8 7.3L12 3l4 4.3a1 1 0 0 1-.8 1.7H15l3 3.3a1 1 0 0 1-.7 1.7H17Z"/><path d="M12 22v-3"/>',
+  'tree-deciduous': '<path d="M8 19a4 4 0 0 1-2.24-7.32A3.5 3.5 0 0 1 9 6.03V6a3 3 0 1 1 6 0v.04a3.5 3.5 0 0 1 3.24 5.65A4 4 0 0 1 16 19Z"/><path d="M12 19v3"/>',
+  'flower-2': '<path d="M12 5a3 3 0 1 1 3 3m-3-3a3 3 0 1 0-3 3m3-3v1M9 8a3 3 0 1 0 3 3M9 8h1m5 0a3 3 0 1 1-3 3m3-3h-1m-2 3v-1"/><circle cx="12" cy="8" r="2"/><path d="M12 10v12"/><path d="M12 22c4.2 0 7-1.667 7-5-4.2 0-7 1.667-7 5Z"/><path d="M12 22c-4.2 0-7-1.667-7-5 4.2 0 7 1.667 7 5Z"/>',
+  'bug': '<path d="m8 2 1.88 1.88"/><path d="M14.12 3.88 16 2"/><path d="M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M12 20v-9"/><path d="M6.53 9C4.6 8.8 3 7.1 3 5"/><path d="M6 13H2"/><path d="M3 21c0-2.1 1.7-3.9 3.8-4"/><path d="M20.97 5c0 2.1-1.6 3.8-3.5 4"/><path d="M22 13h-4"/><path d="M17.2 17c2.1.1 3.8 1.9 3.8 4"/>',
+  'bird': '<path d="M16 7h.01"/><path d="M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"/><path d="m20 7 2 .5-2 .5"/><path d="M10 18v3"/><path d="M14 17.75V21"/><path d="M7 18a6 6 0 0 0 3.84-10.61"/>',
+  'squirrel': '<path d="M15.236 22a3 3 0 0 0-2.2-5"/><path d="M16 20a3 3 0 0 1 3-3h1a2 2 0 0 0 2-2v-1a2 2 0 0 0-.6-1.43A5.97 5.97 0 0 0 18 11a6 6 0 0 0-6 6v.87a3.58 3.58 0 0 1-.6 2A2.94 2.94 0 0 1 9 21H7a3 3 0 0 1-3-3v-2a4 4 0 0 1 4-4h.5"/><path d="M8 14v.5"/><path d="M3.34 12.06A10 10 0 0 1 12 2c2.815 0 5.092.995 7 2.5"/><path d="M16.17 5a7 7 0 0 1 0 9.9"/>',
+  'paw-print': '<circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/>',
+  'mushroom': '<path d="M4 13c0-4 2.5-7 5-8.5V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v.5c2.5 1.5 5 4.5 5 8.5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="M10 14v7a2 2 0 0 0 4 0v-7"/>',
+  'bell': '<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  'search': '<circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>',
+  'x': '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  'zap': '<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  'image': '<rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>',
+  'refresh-cw': '<path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/>',
+  'map-pin': '<path d="M20 10c0 4.993-5.539 10.193-7.399 11.799a1 1 0 0 1-1.202 0C9.539 20.193 4 14.993 4 10a8 8 0 0 1 16 0"/><circle cx="12" cy="10" r="3"/>',
+  'check': '<path d="M20 6 9 17l-5-5"/>',
+  'share-2': '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.59 13.51 6.83 3.98"/><path d="m8.59 10.49 6.83-3.98"/>',
+  'arrow-left': '<path d="m12 19-7-7 7-7"/><path d="M19 12H5"/>',
+  'trophy': '<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+  'globe': '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
+  'ruler': '<path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/>',
+  'star': '<path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a.53.53 0 0 0 .4.29l5.16.756a.53.53 0 0 1 .294.904l-3.733 3.638a.53.53 0 0 0-.152.469l.882 5.14a.53.53 0 0 1-.77.56l-4.615-2.426a.53.53 0 0 0-.493 0L6.18 18.73a.53.53 0 0 1-.77-.56l.882-5.14a.53.53 0 0 0-.152-.47L2.407 8.925a.53.53 0 0 1 .294-.906l5.16-.754a.53.53 0 0 0 .4-.29z"/>',
+  'lock': '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  'sprout': '<path d="M7 20h10"/><path d="M10 20c5.5-2.5.8-6.4 3-10"/><path d="M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8z"/><path d="M14.1 6a7 7 0 0 0-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
+  'signal': '<path d="M2 20h.01"/><path d="M7 20v-4"/><path d="M12 20v-8"/><path d="M17 20V8"/><path d="M22 4v16"/>',
+  'battery': '<rect width="16" height="10" x="2" y="7" rx="2" ry="2"/><path d="M22 11v2"/><rect width="10" height="6" x="4" y="9" rx="1" fill="currentColor"/>',
+  'grid': '<rect width="7" height="7" x="3" y="3" rx="1"/><rect width="7" height="7" x="14" y="3" rx="1"/><rect width="7" height="7" x="14" y="14" rx="1"/><rect width="7" height="7" x="3" y="14" rx="1"/>',
+  'list': '<path d="M3 12h.01M3 18h.01M3 6h.01M8 12h13M8 18h13M8 6h13"/>',
+  'clock': '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
+  'shield-alert': '<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M12 8v4"/><path d="M12 16h.01"/>',
+  'compass': '<circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>',
+  'hand': '<path d="M18 11V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2 2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2 2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/>',
+  'sparkles': '<path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/><path d="M20 3v4"/><path d="M22 5h-4"/><path d="M4 17v2"/><path d="M5 18H3"/>',
+  'scan': '<path d="M3 7V5a2 2 0 0 1 2-2h2"/><path d="M17 3h2a2 2 0 0 1 2 2v2"/><path d="M21 17v2a2 2 0 0 1-2 2h-2"/><path d="M7 21H5a2 2 0 0 1-2-2v-2"/>',
+  'sun': '<circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>',
+  'microscope': '<path d="M6 18h8"/><path d="M3 22h18"/><path d="M14 22a7 7 0 1 0 0-14h-1"/><path d="M9 14h2"/><path d="M9 12a2 2 0 0 1-2-2V6h6v4a2 2 0 0 1-2 2Z"/><path d="M12 6V3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3"/>',
+  'crown': '<path d="M11.562 3.266a.5.5 0 0 1 .876 0L15.39 8.87a1 1 0 0 0 1.516.294L21.183 5.5a.5.5 0 0 1 .798.519l-2.834 10.246a1 1 0 0 1-.956.734H5.81a1 1 0 0 1-.957-.734L2.02 6.02a.5.5 0 0 1 .798-.519l4.276 3.664a1 1 0 0 0 1.516-.294z"/><path d="M5.21 16.5h13.58"/>',
+};
+
+function ic(name, size=20, color='currentColor', sw=1.75) {
+  const path = ICON_PATHS[name] || ICON_PATHS['leaf'];
+  return `<span class="lc"><svg width="${size}" height="${size}" viewBox="0 0 24 24" stroke="${color}" stroke-width="${sw}" fill="none" stroke-linecap="round" stroke-linejoin="round">${path}</svg></span>`;
+}
+
+const screens = [
+  "Splash / Login", "Home Dashboard", "Camera Capture", "Species Result",
+  "Map View", "Journal", "Gamification", "Species Detail"
+];
+
+const navItems = [
+  { icon: 'home', label: "Home", screen: 1 },
+  { icon: 'map', label: "Map", screen: 4 },
+  { icon: 'camera', label: "Capture", screen: 2 },
+  { icon: 'book-open', label: "Journal", screen: 5 },
+  { icon: 'user', label: "Profile", screen: 6 }
+];
+
+function statusBar() {
+  return `<div class="status-bar"><span>9:41</span><div class="status-icons">${ic('signal',14,'#333')} ${ic('battery',14,'#333')}</div></div>`;
+}
+
+function bottomNav(activeIdx) {
+  return `<div class="bottom-nav">${navItems.map((n,i) => `
+    <div class="nav-item ${i===activeIdx?'active':''}" onclick="showScreen(${n.screen})">
+      ${ic(n.icon, 22, i===activeIdx?'#2d8a4e':'#999')}
+      <span>${n.label}</span>
+    </div>`).join('')}</div>`;
+}
+
+function renderScreen(idx) {
+  return [renderSplash,renderHome,renderCapture,renderResult,renderMap,renderJournal,renderGamification,renderSpeciesDetail][idx]();
+}
+
+function renderSplash() {
+  return statusBar() + `
+  <div class="screen" style="text-align:center;padding:20px;">
+    <div style="position:relative;"><div class="wf-annotation" style="right:20px;top:40px;">App logo</div></div>
+    <div style="margin-top:60px;">
+      <div style="width:100px;height:100px;border-radius:50%;background:#2d8a4e;margin:0 auto;display:flex;align-items:center;justify-content:center;">
+        ${ic('leaf',48,'#fff',2)}
+      </div>
+    </div>
+    <h1 style="font-size:42px;font-weight:700;color:#333;margin-top:28px;letter-spacing:2px;">ANZAZ</h1>
+    <p style="color:#999;font-size:14px;margin-top:8px;">Discover. Capture. Protect Biodiversity.</p>
+    <div class="wf-box" style="width:240px;height:120px;margin:30px auto 0;flex-direction:column;gap:6px;">
+      ${ic('tree-deciduous',32,'#bbb')}
+      [ Nature illustration ]
+    </div>
+    <div style="padding:0 30px;margin-top:40px;">
+      <div class="wf-button primary" style="height:50px;width:100%;">Sign Up</div>
+      <div class="wf-button secondary" style="height:50px;width:100%;margin-top:12px;">Log In</div>
+      <p style="color:#bbb;font-size:12px;margin-top:16px;">&mdash; or continue with Google &mdash;</p>
+    </div>
+  </div>`;
+}
+
+function renderHome() {
+  return statusBar() + `
+  <div class="screen">
+    <div class="wf-header-bar" style="padding-bottom:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div>
+          <div style="font-size:20px;font-weight:700;display:flex;align-items:center;gap:6px;">Hello, Zyad! ${ic('hand',20,'#fff')}</div>
+          <div style="font-size:13px;opacity:0.8;margin-top:2px;">What will you discover today?</div>
+        </div>
+        <div style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.25);display:flex;align-items:center;justify-content:center;">${ic('bell',18,'#fff')}</div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-around;padding:16px 10px;background:#f5faf6;border-bottom:1px solid #eee;">
+      ${[["47","Species"],["1,250","Points"],["#12","Rank"]].map(([v,l])=>`
+        <div style="text-align:center;"><div style="font-size:22px;font-weight:700;color:#2d8a4e;">${v}</div><div style="font-size:11px;color:#999;">${l}</div></div>`).join('')}
+    </div>
+    <div style="text-align:center;padding:24px 0 8px;position:relative;">
+      <div class="wf-annotation" style="left:40px;top:10px;">Main CTA</div>
+      <div style="width:90px;height:90px;border-radius:50%;background:#2d8a4e;margin:0 auto;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 16px rgba(45,138,78,0.3);" onclick="showScreen(2)">
+        ${ic('camera',36,'#fff',2)}
+      </div>
+      <div style="font-size:12px;color:#999;margin-top:8px;">Tap to Capture</div>
+    </div>
+    <div style="padding:16px 20px 8px;"><div class="wf-section-title">Recent Discoveries Nearby</div></div>
+    <div style="display:flex;gap:10px;padding:0 20px;overflow-x:auto;">
+      ${[["Atlas Cedar","tree-pine","#2d8a4e"],["Barbary Ape","squirrel","#a0522d"],["Wild Iris","flower-2","#9b59b6"]].map(([name,icon,color])=>`
+        <div class="wf-card" style="min-width:120px;flex-shrink:0;cursor:pointer;" onclick="showScreen(7)">
+          <div class="wf-box" style="height:75px;border:none;border-radius:12px 12px 0 0;">${ic(icon,32,color)}</div>
+          <div style="padding:8px 10px;">
+            <div style="font-size:12px;font-weight:600;color:#333;">${name}</div>
+            <div style="font-size:10px;color:#999;">0.5 km away</div>
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="padding:20px;">
+      <div class="wf-section-title">Active Challenges</div>
+      ${[
+        ["trophy","#b8860b","Find 5 plant species this week","60","3/5","#f5faf6"],
+        ["globe","#3498db","Explore 3 new areas","33","1/3","#faf5f5"]
+      ].map(([icon,color,text,pct,prog,bg])=>`
+        <div style="background:${bg};border-radius:12px;padding:14px 16px;border:1px solid #e0e0e0;margin-bottom:8px;">
+          <div style="font-size:13px;color:#333;display:flex;align-items:center;gap:6px;">${ic(icon,16,color)} ${text}</div>
+          <div style="display:flex;align-items:center;gap:10px;margin-top:10px;">
+            <div class="progress-bg" style="flex:1;"><div class="progress-fill" style="width:${pct}%;"></div></div>
+            <span style="font-size:12px;color:#999;">${prog}</span>
+          </div>
+        </div>`).join('')}
+    </div>
+  </div>${bottomNav(0)}`;
+}
+
+function renderCapture() {
+  return statusBar() + `
+  <div class="screen" style="background:#1a1a1a;position:relative;">
+    <div style="position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;">
+      <div class="wf-box" style="width:340px;height:440px;border-color:#555;color:#666;flex-direction:column;gap:8px;background:#2a2a2a;">
+        ${ic('camera',48,'#555')} [ Camera Viewfinder ]
+      </div>
+    </div>
+    <div style="position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;padding:16px 20px;color:#fff;">
+      <div onclick="showScreen(1)" style="cursor:pointer;">${ic('x',22,'#fff')}</div>
+      <div style="background:rgba(255,255,255,0.15);padding:6px 14px;border-radius:16px;font-size:12px;display:flex;align-items:center;gap:6px;color:#fff;">
+        ${ic('map-pin',14,'#4ade80')} GPS Active
+      </div>
+      <div>${ic('zap',22,'#fff')}</div>
+    </div>
+    <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);">${ic('scan',64,'rgba(255,255,255,0.4)',1.5)}</div>
+    <div class="wf-annotation" style="right:20px;top:100px;">GPS indicator</div>
+    <div class="wf-annotation" style="left:20px;bottom:180px;">Species type filter</div>
+    <div style="position:absolute;bottom:0;left:0;right:0;padding:20px;background:linear-gradient(transparent,rgba(0,0,0,0.8));">
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:24px;">
+        ${[["leaf","Plants",false],["paw-print","Animals",false],["bug","Insects",false],["grid","All",true]].map(([icon,label,active])=>`
+          <div style="padding:6px 14px;border-radius:16px;font-size:12px;color:#fff;display:flex;align-items:center;gap:4px;
+            background:${active?'#2d8a4e':'rgba(255,255,255,0.15)'};">${ic(icon,14,'#fff')} ${label}</div>`).join('')}
+      </div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:40px;">
+        <div style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;">${ic('image',20,'#fff')}</div>
+        <div onclick="showScreen(3)" style="cursor:pointer;width:72px;height:72px;border-radius:50%;border:4px solid #fff;background:#2d8a4e;display:flex;align-items:center;justify-content:center;">
+          <div style="width:56px;height:56px;border-radius:50%;background:#2d8a4e;"></div>
+        </div>
+        <div style="width:40px;height:40px;border-radius:8px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;">${ic('refresh-cw',20,'#fff')}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderResult() {
+  return statusBar() + `
+  <div class="screen" style="padding:0;">
+    <div class="wf-box" style="height:280px;border-radius:0;border:none;font-size:16px;flex-direction:column;gap:8px;">
+      ${ic('tree-pine',64,'#aaa')} [ Captured Photo ]
+    </div>
+    <div style="padding:20px;position:relative;">
+      <div class="wf-annotation" style="right:20px;top:-10px;">AI identification</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
+        <span style="background:#e8f5e9;color:#2d8a4e;padding:4px 10px;border-radius:12px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;">${ic('check',12,'#2d8a4e')} 95% match</span>
+        <span style="font-size:11px;color:#999;">Identified in 1.2s</span>
+      </div>
+      <h2 style="font-size:24px;font-weight:700;color:#333;">Atlas Cedar</h2>
+      <p style="font-size:13px;color:#999;font-style:italic;">Cedrus atlantica</p>
+      <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;">
+        ${[["globe","Native to Morocco"],["ruler","30-40m tall"],["shield-alert","Endangered"],["leaf","Conifer"]].map(([icon,text])=>`
+          <div style="background:#f5faf6;padding:8px 12px;border-radius:8px;font-size:12px;display:flex;align-items:center;gap:6px;">
+            ${ic(icon,14,'#2d8a4e')} ${text}
+          </div>`).join('')}
+      </div>
+      <div style="margin-top:16px;">
+        <div class="wf-section-title" style="font-size:14px;">About</div>
+        <p style="font-size:12px;color:#666;line-height:1.6;">The Atlas cedar is an endemic species of the Atlas Mountains. It plays a crucial role in the region's ecosystem and is currently classified as endangered...</p>
+        <span onclick="showScreen(7)" style="font-size:12px;color:#2d8a4e;cursor:pointer;font-weight:600;">Read more &rarr;</span>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="wf-section-title" style="font-size:14px;">Location Captured</div>
+        <div class="wf-box" style="height:80px;font-size:11px;gap:6px;">${ic('map-pin',16,'#999')} Ifrane National Park &bull; 33.53&deg;N, 5.11&deg;W</div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:20px;">
+        <div class="wf-button primary" style="flex:1;height:46px;font-size:14px;">${ic('check',16,'#fff')} Save to Journal</div>
+        <div class="wf-button secondary" style="flex:1;height:46px;font-size:14px;">${ic('share-2',16,'#2d8a4e')} Share</div>
+      </div>
+      <div style="text-align:center;margin-top:16px;padding:12px;background:#fffde0;border-radius:10px;border:1px solid #e6d96c;display:flex;align-items:center;justify-content:center;gap:6px;">
+        ${ic('sparkles',16,'#8a7a00')} <span style="font-size:14px;">+50 points earned!</span>
+      </div>
+    </div>
+  </div>${bottomNav(-1)}`;
+}
+
+function renderMap() {
+  return statusBar() + `
+  <div class="screen" style="position:relative;">
+    <div style="height:100%;background:#e8e4df;position:relative;">
+      <div class="wf-box" style="position:absolute;inset:0;border:none;border-radius:0;flex-direction:column;gap:4px;background:linear-gradient(135deg,#d4e8d0,#e8e4df,#d0dce8);">
+        ${ic('map',48,'#bbb',1.5)} [ Interactive Map ]
+      </div>
+      ${[[120,180,"tree-pine","#2d8a4e"],[250,280,"squirrel","#e67e22"],[180,400,"flower-2","#e74c8b"],[90,350,"bug","#3498db"],[280,180,"tree-pine","#2d8a4e"],[200,240,"mushroom","#9b59b6"]].map(([x,y,icon,color])=>`
+        <div style="position:absolute;left:${x}px;top:${y}px;width:32px;height:32px;border-radius:50% 50% 50% 0;background:${color};transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,0.2);">
+          <span style="transform:rotate(45deg);display:flex;">${ic(icon,14,'#fff')}</span>
+        </div>`).join('')}
+      <div style="position:absolute;top:10px;left:16px;right:16px;">
+        <div class="wf-input" style="background:rgba(255,255,255,0.95);display:flex;align-items:center;gap:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+          ${ic('search',16,'#999')} Search species or location...
+        </div>
+      </div>
+      <div style="position:absolute;top:65px;left:16px;display:flex;gap:6px;">
+        ${[["grid","All",true],["leaf","Plants",false],["paw-print","Animals",false],["bug","Insects",false]].map(([icon,label,active])=>`
+          <div style="padding:5px 12px;border-radius:14px;font-size:11px;font-weight:500;display:flex;align-items:center;gap:4px;
+            background:${active?'#2d8a4e':'rgba(255,255,255,0.9)'};color:${active?'#fff':'#555'};
+            box-shadow:0 1px 4px rgba(0,0,0,0.1);">${ic(icon,12,active?'#fff':'#555')} ${label}</div>`).join('')}
+      </div>
+      <div style="position:absolute;bottom:16px;right:16px;width:44px;height:44px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.15);">${ic('compass',22,'#2d8a4e')}</div>
+      <div style="position:absolute;bottom:16px;left:16px;right:70px;background:rgba(255,255,255,0.95);border-radius:12px;padding:12px;box-shadow:0 2px 10px rgba(0,0,0,0.1);cursor:pointer;" onclick="showScreen(7)">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="width:44px;height:44px;border-radius:8px;background:#e8f5e9;display:flex;align-items:center;justify-content:center;">${ic('tree-pine',24,'#2d8a4e')}</div>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#333;">Atlas Cedar</div>
+            <div style="font-size:11px;color:#999;">3 sightings nearby &bull; Tap for details</div>
+          </div>
+        </div>
+      </div>
+      <div class="wf-annotation" style="right:16px;top:120px;">Sighting pins</div>
+    </div>
+  </div>${bottomNav(1)}`;
+}
+
+function renderJournal() {
+  return statusBar() + `
+  <div class="screen" style="padding:0;">
+    <div style="padding:16px 20px;border-bottom:1px solid #eee;">
+      <h2 style="font-size:22px;font-weight:700;color:#333;">My Journal</h2>
+      <p style="font-size:13px;color:#999;margin-top:2px;">47 species captured</p>
+    </div>
+    <div style="display:flex;gap:0;margin:12px 20px;background:#f0f0f0;border-radius:8px;overflow:hidden;">
+      ${[["grid","Grid",true],["list","List",false],["clock","Timeline",false]].map(([icon,label,active])=>`
+        <div style="flex:1;text-align:center;padding:8px;font-size:12px;font-weight:${active?'600':'500'};background:${active?'#333':'transparent'};color:${active?'#fff':'#666'};display:flex;align-items:center;justify-content:center;gap:4px;">${ic(icon,14,active?'#fff':'#666')} ${label}</div>`).join('')}
+    </div>
+    <div style="display:flex;gap:6px;padding:8px 20px;overflow-x:auto;">
+      ${["All (47)","Plants (22)","Animals (15)","Insects (10)"].map((f,i)=>`
+        <div style="flex-shrink:0;padding:5px 12px;border-radius:14px;font-size:11px;font-weight:500;
+          background:${i===0?'#2d8a4e':'#f0f0f0'};color:${i===0?'#fff':'#666'};">${f}</div>`).join('')}
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:3px;padding:12px 20px;">
+      ${[["tree-pine","#2d8a4e"],["squirrel","#a0522d"],["flower-2","#9b59b6"],["bug","#3498db"],["mushroom","#e67e22"],["sun","#daa520"],["bird","#2c3e50"],["leaf","#27ae60"],["sprout","#16a085"],["bug","#f39c12"],["flower-2","#e74c8b"],["bird","#8e44ad"]].map(([icon,color],i)=>`
+        <div onclick="showScreen(7)" style="cursor:pointer;aspect-ratio:1;background:#f0edea;border-radius:8px;display:flex;align-items:center;justify-content:center;position:relative;">
+          ${ic(icon,28,color)}
+          ${i<3?'<div style="position:absolute;top:4px;right:4px;width:8px;height:8px;border-radius:50%;background:#2d8a4e;"></div>':''}
+        </div>`).join('')}
+    </div>
+    <div class="wf-annotation" style="right:20px;top:100px;">Collection grid</div>
+  </div>${bottomNav(3)}`;
+}
+
+function renderGamification() {
+  return statusBar() + `
+  <div class="screen" style="padding:0;">
+    <div class="wf-header-bar" style="text-align:center;padding:24px 20px;">
+      <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,0.2);margin:0 auto;display:flex;align-items:center;justify-content:center;border:3px solid rgba(255,255,255,0.5);">
+        ${ic('user',28,'#fff',2)}
+      </div>
+      <div style="font-size:18px;font-weight:700;margin-top:8px;">Zyad Serghini</div>
+      <div style="font-size:12px;opacity:0.8;">Nature Explorer &bull; Level 7</div>
+      <div style="display:flex;justify-content:center;gap:24px;margin-top:16px;">
+        ${[["47","Species"],["1,250","Points"],["#12","Rank"]].map(([v,l])=>`
+          <div><span style="font-weight:700;">${v}</span><br><span style="font-size:10px;opacity:0.7;">${l}</span></div>`).join('')}
+      </div>
+    </div>
+    <div style="padding:16px 20px;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:#666;margin-bottom:6px;">
+        <span>Level 7</span><span>750 / 1000 XP to Level 8</span>
+      </div>
+      <div class="progress-bg" style="height:10px;"><div class="progress-fill" style="width:75%;"></div></div>
+    </div>
+    <div style="padding:0 20px 12px;">
+      <div class="wf-section-title">Badges</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;">
+        ${[["sprout","First Catch","earned"],["leaf","Plant Pro","earned"],["paw-print","Animal Spotter","earned"],["compass","Explorer","earned"],["microscope","Scientist","locked"],["crown","Legend","locked"]].map(([icon,name,status])=>`
+          <div style="text-align:center;width:56px;">
+            <div class="badge-item ${status}">${status==='locked'?ic('lock',20,'#ccc'):ic(icon,20,'#2d8a4e')}</div>
+            <div style="font-size:9px;color:#666;margin-top:4px;">${name}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+    <div style="padding:0 20px 20px;">
+      <div class="wf-section-title">Leaderboard</div>
+      ${[["trophy","Sarah K.","2,450","#ffd700",false],["trophy","Omar M.","1,890","#c0c0c0",false],["trophy","Aya L.","1,670","#cd7f32",false],["star","Zyad S. (You)","1,250","#2d8a4e",true]].map(([icon,name,pts,color,isYou])=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;margin-bottom:4px;
+          background:${isYou?'#f5faf6':'#fafafa'};${isYou?'border:1.5px solid #2d8a4e;':''}">
+          <span style="width:28px;text-align:center;">${ic(icon,18,color)}</span>
+          <span style="flex:1;font-size:13px;font-weight:${isYou?'600':'400'};color:#333;">${name}</span>
+          <span style="font-size:12px;color:#2d8a4e;font-weight:600;">${pts} pts</span>
+        </div>`).join('')}
+    </div>
+  </div>${bottomNav(4)}`;
+}
+
+function renderSpeciesDetail() {
+  return statusBar() + `
+  <div class="screen" style="padding:0;">
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid #eee;">
+      <span onclick="showScreen(1)" style="cursor:pointer;">${ic('arrow-left',20,'#333')}</span>
+      <span style="font-size:15px;font-weight:600;color:#333;">Species Detail</span>
+    </div>
+    <div class="wf-box" style="height:200px;border-radius:0;border:none;">${ic('tree-pine',64,'#aaa')}</div>
+    <div style="padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <h2 style="font-size:22px;font-weight:700;color:#333;">Atlas Cedar</h2>
+          <p style="font-size:13px;color:#999;font-style:italic;">Cedrus atlantica</p>
+        </div>
+        <span style="background:#fee;color:#c0392b;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:600;display:flex;align-items:center;gap:4px;">${ic('shield-alert',12,'#c0392b')} Endangered</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:16px;">
+        ${[["Kingdom","Plantae"],["Family","Pinaceae"],["Height","30-40m"],["Lifespan","800+ years"]].map(([k,v])=>`
+          <div style="background:#f5faf6;padding:10px 12px;border-radius:8px;">
+            <div style="font-size:10px;color:#999;">${k}</div>
+            <div style="font-size:13px;font-weight:600;color:#333;">${v}</div>
+          </div>`).join('')}
+      </div>
+      <div style="margin-top:16px;">
+        <div class="wf-section-title" style="font-size:14px;">Description</div>
+        <p style="font-size:12px;color:#666;line-height:1.7;">The Atlas cedar is a species of cedar native to the Atlas Mountains of Morocco and Algeria. It is an evergreen conifer that can reach heights of 30-40 meters. The species is classified as endangered due to habitat loss, climate change, and overexploitation.</p>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="wf-section-title" style="font-size:14px;">Habitat Range</div>
+        <div class="wf-box" style="height:100px;gap:6px;">${ic('map',24,'#999')} [ Distribution Map ]</div>
+      </div>
+      <div style="margin-top:16px;">
+        <div class="wf-section-title" style="font-size:14px;">Community Sightings (23)</div>
+        <div style="display:flex;gap:6px;">
+          ${[1,2,3,4].map(()=>`<div class="wf-box" style="width:70px;height:70px;border-radius:8px;">${ic('tree-pine',24,'#bbb')}</div>`).join('')}
+          <div style="width:70px;height:70px;border-radius:8px;background:#f0f0f0;display:flex;align-items:center;justify-content:center;font-size:12px;color:#999;">+19</div>
+        </div>
+      </div>
+      <div class="wf-button primary" style="height:46px;width:100%;margin-top:20px;font-size:14px;">${ic('camera',16,'#fff')} I spotted this species!</div>
+    </div>
+  </div>${bottomNav(-1)}`;
+}
+
+// Navigation
+let currentScreen = 0;
+function showScreen(idx) { currentScreen = idx; renderPhone(); updateTabs(); }
+function renderPhone() { document.getElementById('phone').innerHTML = renderScreen(currentScreen); }
+function updateTabs() { document.querySelectorAll('.tab').forEach((t,i) => t.classList.toggle('active', i===currentScreen)); }
+
+const tabsEl = document.getElementById('tabs');
+screens.forEach((name, i) => {
+  const tab = document.createElement('div');
+  tab.className = 'tab' + (i===0?' active':'');
+  tab.textContent = `${i+1}. ${name}`;
+  tab.onclick = () => showScreen(i);
+  tabsEl.appendChild(tab);
+});
+
+function setView(mode) {
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (mode === 'single') {
+    document.getElementById('single-view').style.display = '';
+    document.getElementById('all-view').style.display = 'none';
+    document.getElementById('tabs').style.display = '';
+  } else {
+    document.getElementById('single-view').style.display = 'none';
+    document.getElementById('tabs').style.display = 'none';
+    const allView = document.getElementById('all-view');
+    allView.style.display = '';
+    allView.innerHTML = '';
+    screens.forEach((name, i) => {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'screen-wrapper';
+      const miniPhone = document.createElement('div');
+      miniPhone.className = 'phone mini';
+      miniPhone.innerHTML = renderScreen(i);
+      wrapper.appendChild(miniPhone);
+      const label = document.createElement('div');
+      label.className = 'label';
+      label.textContent = `${i+1}. ${name}`;
+      wrapper.appendChild(label);
+      allView.appendChild(wrapper);
+    });
+  }
+}
+
+renderPhone();
+</script>
+</body>
+</html>

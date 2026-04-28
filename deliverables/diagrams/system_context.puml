@@ -1,0 +1,33 @@
+@startuml
+title ANZAZ System Context Diagram
+
+' Styling
+skinparam rectangle {
+  BorderColor Black
+}
+skinparam package {
+  BorderColor Black
+}
+
+' SYSTEM CONTEXT BOUNDARY (outer)
+package "System Context Boundary" {
+
+    ' Main System (System Boundary)
+rectangle "ANZAZ Mobile System\n(System Boundary)" as ANZAZ #ADD8E6
+
+    ' External systems inside context
+    rectangle "Users\n(Hikers / Citizens)" as Users #87CEFA
+    rectangle "External Database\n(Image Recognition & Species Data)" as DB #87CEFA
+    rectangle "Government Agencies /\nEnvironmental Orgs" as Gov #FF7F9F
+    rectangle "Research / Academic\nInstitutions" as Research #FF7F9F
+
+    ' Relationships
+    Users --> ANZAZ : Photos, GPS Data
+    ANZAZ --> Users : Rewards, Info
+
+    ANZAZ <--> DB : Image Queries / Results
+
+    ANZAZ --> Gov : Biodiversity Data Insights
+    ANZAZ --> Research : Biodiversity Datasets
+}
+@enduml
