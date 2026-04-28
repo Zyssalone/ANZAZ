@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "ANZAZ",
+    "slug": "anzaz",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#2d8a4e"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.anzaz.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2d8a4e"
+      },
+      "package": "com.anzaz.app"
+    },
+    "androidStatusBar": {
+      "translucent": true,
+      "backgroundColor": "#00000000"
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": []
+  }
+}
