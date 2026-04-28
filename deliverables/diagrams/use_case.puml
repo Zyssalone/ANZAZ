@@ -1,0 +1,34 @@
+@startuml
+title ANZAZ - Use Case Diagram
+
+left to right direction
+
+actor "User (Hiker / Citizen)" as User
+actor "External Image Recognition System" as AI
+actor "Research / Government Organizations" as Org
+
+rectangle "ANZAZ Mobile Application System" {
+
+    (Save Observation) as UC4
+    (Earn Points / Rewards) as UC5
+    (View Species Info) as UC1
+    (Identify Species) as UC3
+    (Capture Photo) as UC2
+    (Track Biodiversity Data) as UC6
+    (Share Data with Organizations) as UC7
+
+    ' Correct include relationships (direction matters)
+    UC2 .> UC3 : <<include>>
+    UC7 .> UC6 : <<include>>
+}
+
+' Actor interactions (match reference exactly)
+User --> UC4
+User --> UC5
+User --> UC1
+User --> UC3
+
+AI --> UC2
+
+Org --> UC7
+@enduml
