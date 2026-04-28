@@ -6,11 +6,6 @@
 
 By [**Aya Alami**](https://github.com/ayaa14?), [**Nizar El Ghanbaz**](https://github.com/Zyssalone), [**Zyad Serghini**](https://github.com/ZyadSerghini)
 
-
-<p align="center">
-  <img src="./assets/demo.gif" alt="ANZAZ demo" width="700"/>
-</p>
-
 ## Table of Contents
 
 1. [Project Overview](#project-overview)
@@ -25,6 +20,10 @@ By [**Aya Alami**](https://github.com/ayaa14?), [**Nizar El Ghanbaz**](https://g
 10. [Deployment & Configuration](#deployment--configuration)
 
 ---
+
+<p align="center">
+  <img src="./assets/demo.gif" alt="ANZAZ demo" height="300"/>
+</p>
 
 ## Project Overview
 
