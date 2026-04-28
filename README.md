@@ -72,15 +72,6 @@ The application exists in **dual mode**:
 | **Validation** | express-validator | 7.1.0 | Request validation |
 | **CORS** | cors | 2.8.5 | Cross-origin resource sharing |
 
-### DevTools
-
-- **Frontend Dev:** Expo Go (mobile testing)
-- **Backend Dev:** Nodemon (auto-reload)
-- **Database:** psql CLI + SQL migrations
-- **Config:** dotenv (environment variables)
-
----
-
 ## Architecture Layers
 
 ### 3-Tier Architecture
