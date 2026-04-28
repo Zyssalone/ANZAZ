@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -26,9 +26,11 @@ import {
   Microscope,
   Crown,
   Lock,
+  LogOut,
   Trophy,
   Star,
 } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors, Shadow, Radius, Spacing } from '../theme';
 import ProgressBar from '../components/ProgressBar';
@@ -37,6 +39,10 @@ import {
   BADGES,
   LEADERBOARD,
 } from '../data/mockData';
+import type { Badge, LeaderboardEntry } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
+import { api } from '../utils/api';
+import { getUserStats, toBadge, toLeaderboardEntry } from '../utils/mappers';
 
 const { width } = Dimensions.get('window');
 
@@ -65,7 +71,7 @@ function BadgeTile({ badge, index }: { badge: typeof BADGES[0]; index: number })
   const Icon = BADGE_ICONS[badge.iconName] ?? Leaf;
   return (
     <Animated.View
-      entering={ZoomIn.delay(index * 60 + 500).springify()}
+      entering={ZoomIn.delay(index * 16 + 120).duration(90)}
       style={styles.badgeWrap}
     >
       <View
@@ -88,6 +94,27 @@ function BadgeTile({ badge, index }: { badge: typeof BADGES[0]; index: number })
 }
 
 export default function ProfileScreen() {
+  const navigation = useNavigation<any>();
+  const { user, logout, refreshUser } = useAuth();
+  const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>(LEADERBOARD);
+  const [badges, setBadges] = useState<Badge[]>(BADGES);
+  const currentUser = user ? getUserStats(user) : CURRENT_USER;
+
+  useEffect(() => {
+    refreshUser().catch(() => undefined);
+    api.badges.list()
+      .then((rows) => setBadges(rows.map(toBadge)))
+      .catch(() => setBadges(BADGES));
+    api.leaderboard.get()
+      .then((rows) => setLeaderboard(rows.map((row) => toLeaderboardEntry(row, user?.id ?? null))))
+      .catch(() => setLeaderboard(LEADERBOARD));
+  }, [user?.id]);
+
+  const handleLogout = () => {
+    logout();
+    navigation.reset({ index: 0, routes: [{ name: 'Auth' }] });
+  };
+
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
       <StatusBar style="light" backgroundColor="transparent" translucent />
@@ -97,22 +124,22 @@ export default function ProfileScreen() {
         style={styles.scroll}
       >
         {/* Header Card */}
-        <Animated.View entering={FadeInDown.delay(50).springify()} style={styles.headerCard}>
+        <Animated.View entering={FadeInDown.delay(20).duration(100)} style={styles.headerCard}>
           <View style={styles.avatarWrap}>
             <View style={styles.avatar}>
               <User size={32} color="#fff" strokeWidth={2} />
             </View>
           </View>
-          <Text style={styles.userName}>{CURRENT_USER.name}</Text>
+          <Text style={styles.userName}>{currentUser.name}</Text>
           <Text style={styles.userTitle}>
-            {CURRENT_USER.title} &bull; Level {CURRENT_USER.level}
+            {currentUser.title} &bull; Level {currentUser.level}
           </Text>
 
           <View style={styles.statsRow}>
             {[
-              { value: CURRENT_USER.speciesCount.toString(), label: 'Species' },
-              { value: CURRENT_USER.points.toLocaleString(), label: 'Points' },
-              { value: `#${CURRENT_USER.rank}`, label: 'Rank' },
+              { value: currentUser.speciesCount.toString(), label: 'Species' },
+              { value: currentUser.points.toLocaleString(), label: 'Points' },
+              { value: currentUser.rank ? `#${currentUser.rank}` : '-', label: 'Rank' },
             ].map((s) => (
               <View key={s.label} style={styles.statItem}>
                 <Text style={styles.statValue}>{s.value}</Text>
@@ -123,41 +150,41 @@ export default function ProfileScreen() {
         </Animated.View>
 
         {/* XP Progress */}
-        <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.xpCard}>
+        <Animated.View entering={FadeInDown.delay(60).duration(100)} style={styles.xpCard}>
           <View style={styles.xpRow}>
-            <Text style={styles.xpLabel}>Level {CURRENT_USER.level}</Text>
+            <Text style={styles.xpLabel}>Level {currentUser.level}</Text>
             <Text style={styles.xpRight}>
-              {CURRENT_USER.xp} / {CURRENT_USER.xpMax} XP to Level {CURRENT_USER.level + 1}
+              {currentUser.xp} / {currentUser.xpMax} XP to Level {currentUser.level + 1}
             </Text>
           </View>
           <ProgressBar
-            progress={CURRENT_USER.xp / CURRENT_USER.xpMax}
+            progress={currentUser.xp / currentUser.xpMax}
             height={10}
-            delay={400}
+            delay={80}
           />
         </Animated.View>
 
         {/* Badges */}
-        <Animated.View entering={FadeInDown.delay(300).springify()} style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(90).duration(100)} style={styles.section}>
           <Text style={styles.sectionTitle}>Badges</Text>
           <View style={styles.badgeGrid}>
-            {BADGES.map((badge, i) => (
+            {badges.map((badge, i) => (
               <BadgeTile key={badge.id} badge={badge} index={i} />
             ))}
           </View>
         </Animated.View>
 
         {/* Leaderboard */}
-        <Animated.View entering={FadeInDown.delay(400).springify()} style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(120).duration(100)} style={styles.section}>
           <Text style={styles.sectionTitle}>Leaderboard</Text>
           <View style={styles.leaderboard}>
-            {LEADERBOARD.map((entry, i) => {
+            {leaderboard.map((entry, i) => {
               const RankIcon = RANK_ICON[entry.rank] ?? Star;
               const rankColor = RANK_COLOR[entry.rank] ?? Colors.primary;
               return (
                 <Animated.View
                   key={entry.id}
-                  entering={FadeInDown.delay(460 + i * 60).springify()}
+                  entering={FadeInDown.delay(140 + i * 18).duration(90)}
                   style={[
                     styles.leaderRow,
                     entry.isCurrentUser && styles.leaderRowActive,
@@ -192,6 +219,11 @@ export default function ProfileScreen() {
             })}
           </View>
         </Animated.View>
+
+        <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.85}>
+          <LogOut size={17} color="#c0392b" strokeWidth={2} />
+          <Text style={styles.logoutText}>Log out</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -210,6 +242,20 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.md,
     gap: 6,
   },
+  logoutBtn: {
+    marginHorizontal: Spacing.md,
+    marginTop: 20,
+    height: 48,
+    borderRadius: Radius.md,
+    borderWidth: 1,
+    borderColor: '#f0c8c8',
+    backgroundColor: '#fff5f5',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  logoutText: { color: '#c0392b', fontSize: 14, fontWeight: '700' },
   avatarWrap: {
     width: 72,
     height: 72,

@@ -28,7 +28,7 @@ export default function ProgressBar({
   useEffect(() => {
     const timer = setTimeout(() => {
       width.value = withTiming(Math.min(Math.max(progress, 0), 1), {
-        duration: 800,
+        duration: 220,
         easing: Easing.out(Easing.cubic),
       });
     }, delay);

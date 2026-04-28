@@ -33,8 +33,8 @@ function CaptureTabButton({ onPress }: { onPress: () => void }) {
   }));
 
   const handlePress = () => {
-    scale.value = withSpring(0.88, { damping: 12 }, () => {
-      scale.value = withSpring(1, { damping: 12 });
+    scale.value = withSpring(0.92, { damping: 22, stiffness: 420, mass: 0.55 }, () => {
+      scale.value = withSpring(1, { damping: 24, stiffness: 500, mass: 0.5 });
     });
     onPress();
   };

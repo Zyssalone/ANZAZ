@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Dimensions,
+  Alert,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -37,8 +38,12 @@ import type { StackScreenProps } from '@react-navigation/stack';
 
 import { Colors, Shadow, Radius, Spacing } from '../theme';
 import { RESULT_SPECIES } from '../data/mockData';
+import type { Species } from '../data/mockData';
 import StatusBadge from '../components/StatusBadge';
 import type { RootStackParamList } from '../types/navigation';
+import { useAuth } from '../context/AuthContext';
+import { api } from '../utils/api';
+import { toSpecies } from '../utils/mappers';
 
 type Props = StackScreenProps<RootStackParamList, 'Result'>;
 
@@ -52,8 +57,9 @@ const CHIPS = [
   { icon: Leaf, text: 'Conifer' },
 ];
 
-export default function ResultScreen({ navigation }: Props) {
-  const sp = RESULT_SPECIES;
+export default function ResultScreen({ navigation, route }: Props) {
+  const { token, refreshUser } = useAuth();
+  const [sp, setSp] = useState<Species>(RESULT_SPECIES);
 
   const imgScale = useSharedValue(1.08);
   const panelY = useSharedValue(200);
@@ -81,19 +87,40 @@ export default function ResultScreen({ navigation }: Props) {
   }));
 
   useEffect(() => {
-    imgScale.value = withTiming(1, { duration: 600 });
-    panelY.value = withSpring(0, { damping: 18, stiffness: 120 });
-    panelOpacity.value = withTiming(1, { duration: 400 });
-    badgeScale.value = withDelay(300, withSpring(1, { damping: 12 }));
+    imgScale.value = withTiming(1, { duration: 140 });
+    panelY.value = withSpring(0, { damping: 30, stiffness: 520, mass: 0.6 });
+    panelOpacity.value = withTiming(1, { duration: 120 });
+    badgeScale.value = withDelay(80, withSpring(1, { damping: 24, stiffness: 560, mass: 0.5 }));
 
     // Points toast
-    toastY.value = withDelay(800, withSpring(0, { damping: 16 }));
-    toastOpacity.value = withDelay(800, withTiming(1, { duration: 300 }));
-    toastY.value = withDelay(2800, withSpring(60, { damping: 16 }));
-    toastOpacity.value = withDelay(2800, withTiming(0, { duration: 300 }));
+    toastY.value = withDelay(260, withSpring(0, { damping: 28, stiffness: 520, mass: 0.55 }));
+    toastOpacity.value = withDelay(260, withTiming(1, { duration: 100 }));
+    toastY.value = withDelay(1500, withSpring(60, { damping: 30, stiffness: 540, mass: 0.55 }));
+    toastOpacity.value = withDelay(1500, withTiming(0, { duration: 100 }));
   }, []);
 
-  const handleSave = () => {
+  useEffect(() => {
+    api.species.get(route.params?.speciesId ?? RESULT_SPECIES.id)
+      .then((row) => setSp(toSpecies(row)))
+      .catch(() => undefined);
+  }, [route.params?.speciesId]);
+
+  const handleSave = async () => {
+    if (token) {
+      try {
+        await api.sightings.create({
+          species_id: Number(sp.id),
+          latitude: 33.5228,
+          longitude: -5.1106,
+          location_name: 'Ifrane National Park',
+          notes: 'Captured from ANZAZ mobile app',
+        });
+        await refreshUser().catch(() => undefined);
+      } catch (error) {
+        Alert.alert('Save failed', error instanceof Error ? error.message : 'Please try again.');
+        return;
+      }
+    }
     navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
   };
 

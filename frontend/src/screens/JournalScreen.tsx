@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   View,
   Text,
@@ -32,7 +32,11 @@ import { useNavigation } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { Colors, Shadow, Radius, Spacing } from '../theme';
 import { SPECIES_DATA, CURRENT_USER } from '../data/mockData';
+import type { Species } from '../data/mockData';
 import StatusBadge from '../components/StatusBadge';
+import { useAuth } from '../context/AuthContext';
+import { api } from '../utils/api';
+import { getUserStats, toSpecies } from '../utils/mappers';
 
 const { width } = Dimensions.get('window');
 const GRID_ITEM = (width - Spacing.md * 2 - 8) / 3;
@@ -41,13 +45,6 @@ const VIEWS = [
   { key: 'grid', label: 'Grid', icon: Grid },
   { key: 'list', label: 'List', icon: List },
   { key: 'timeline', label: 'Timeline', icon: Clock },
-] as const;
-
-const CATEGORY_FILTERS = [
-  { key: 'all', label: `All (${CURRENT_USER.speciesCount})` },
-  { key: 'plant', label: 'Plants (22)' },
-  { key: 'animal', label: 'Animals (15)' },
-  { key: 'insect', label: 'Insects (10)' },
 ] as const;
 
 const CATEGORY_ICON: Record<string, React.FC<any>> = {
@@ -66,13 +63,13 @@ const CATEGORY_COLOR: Record<string, string> = {
   fungi: Colors.speciesFungi,
 };
 
-function GridItem({ species, index, onPress }: { species: typeof SPECIES_DATA[0]; index: number; onPress: () => void }) {
+function GridItem({ species, index, onPress }: { species: Species; index: number; onPress: () => void }) {
   const Icon = CATEGORY_ICON[species.category] ?? Leaf;
   const color = CATEGORY_COLOR[species.category] ?? Colors.primary;
   const isNew = index < 3;
 
   return (
-    <Animated.View entering={ZoomIn.delay(index * 40 + 100).springify()}>
+    <Animated.View entering={ZoomIn.delay(index * 14 + 40).duration(90)}>
       <TouchableOpacity
         style={[styles.gridItem, { width: GRID_ITEM }]}
         onPress={onPress}
@@ -88,12 +85,12 @@ function GridItem({ species, index, onPress }: { species: typeof SPECIES_DATA[0]
   );
 }
 
-function ListItem({ species, index, onPress }: { species: typeof SPECIES_DATA[0]; index: number; onPress: () => void }) {
+function ListItem({ species, index, onPress }: { species: Species; index: number; onPress: () => void }) {
   const Icon = CATEGORY_ICON[species.category] ?? Leaf;
   const color = CATEGORY_COLOR[species.category] ?? Colors.primary;
 
   return (
-    <Animated.View entering={FadeInDown.delay(index * 50 + 100).springify()}>
+    <Animated.View entering={FadeInDown.delay(index * 16 + 40).duration(90)}>
       <TouchableOpacity
         style={[styles.listItem, Shadow.sm]}
         onPress={onPress}
@@ -120,8 +117,10 @@ function ListItem({ species, index, onPress }: { species: typeof SPECIES_DATA[0]
 
 export default function JournalScreen() {
   const navigation = useNavigation<any>();
+  const { user, token } = useAuth();
   const [activeView, setActiveView] = useState<'grid' | 'list' | 'timeline'>('grid');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [species, setSpecies] = useState<Species[]>(SPECIES_DATA);
 
   const viewIndicatorX = useSharedValue(0);
   const viewIndicatorStyle = useAnimatedStyle(() => ({
@@ -130,13 +129,31 @@ export default function JournalScreen() {
 
   const switchView = (idx: number, key: typeof activeView) => {
     setActiveView(key);
-    viewIndicatorX.value = withSpring(idx * ((width - Spacing.md * 2 - 6) / 3), { damping: 16 });
+    viewIndicatorX.value = withSpring(idx * ((width - Spacing.md * 2 - 6) / 3), { damping: 28, stiffness: 520, mass: 0.55 });
   };
+
+  useEffect(() => {
+    const request = token ? api.sightings.mine() : api.species.list();
+    request
+      .then((rows) => setSpecies(rows.map(toSpecies)))
+      .catch(() => setSpecies(SPECIES_DATA));
+  }, [token]);
+
+  const currentUser = user ? getUserStats(user) : CURRENT_USER;
+  const categoryFilters = useMemo(() => {
+    const count = (category: string) => species.filter((s) => s.category === category).length;
+    return [
+      { key: 'all', label: `All (${species.length || currentUser.speciesCount})` },
+      { key: 'plant', label: `Plants (${count('plant')})` },
+      { key: 'animal', label: `Animals (${count('animal')})` },
+      { key: 'insect', label: `Insects (${count('insect')})` },
+    ];
+  }, [species, currentUser.speciesCount]);
 
   const filteredSpecies =
     activeFilter === 'all'
-      ? SPECIES_DATA
-      : SPECIES_DATA.filter((s) => s.category === activeFilter);
+      ? species
+      : species.filter((s) => s.category === activeFilter);
 
   const handleSpeciesPress = (id: string) =>
     navigation.navigate('SpeciesDetail', { speciesId: id });
@@ -150,14 +167,14 @@ export default function JournalScreen() {
         contentContainerStyle={styles.content}
       >
         {/* Header */}
-        <Animated.View entering={FadeInDown.delay(50).springify()} style={styles.header}>
+        <Animated.View entering={FadeInDown.delay(20).duration(100)} style={styles.header}>
           <Text style={styles.headerTitle}>My Journal</Text>
-          <Text style={styles.headerSub}>{CURRENT_USER.speciesCount} species captured</Text>
+          <Text style={styles.headerSub}>{currentUser.speciesCount} species captured</Text>
         </Animated.View>
 
         {/* View toggle */}
         <Animated.View
-          entering={FadeInDown.delay(120).springify()}
+          entering={FadeInDown.delay(50).duration(100)}
           style={styles.viewToggleWrap}
         >
           <View style={styles.viewToggle}>
@@ -188,13 +205,13 @@ export default function JournalScreen() {
         </Animated.View>
 
         {/* Category Filters */}
-        <Animated.View entering={FadeInDown.delay(180).springify()}>
+        <Animated.View entering={FadeInDown.delay(80).duration(100)}>
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.filterRow}
           >
-            {CATEGORY_FILTERS.map(({ key, label }) => (
+            {categoryFilters.map(({ key, label }) => (
               <TouchableOpacity
                 key={key}
                 style={[

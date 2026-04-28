@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -38,6 +38,10 @@ import { StatusBar } from 'expo-status-bar';
 import { Colors, Shadow, Radius, Spacing } from '../theme';
 import ProgressBar from '../components/ProgressBar';
 import { CURRENT_USER, SPECIES_DATA, CHALLENGES } from '../data/mockData';
+import type { Challenge, Species } from '../data/mockData';
+import { useAuth } from '../context/AuthContext';
+import { api } from '../utils/api';
+import { getUserStats, toChallenge, toSpecies } from '../utils/mappers';
 
 const { width } = Dimensions.get('window');
 
@@ -57,6 +61,9 @@ const CHALLENGE_ICON: Record<string, React.FC<any>> = {
 
 export default function HomeScreen() {
   const navigation = useNavigation<any>();
+  const { user, token, refreshUser } = useAuth();
+  const [species, setSpecies] = useState<Species[]>(SPECIES_DATA);
+  const [challenges, setChallenges] = useState<Challenge[]>(CHALLENGES);
 
   const headerOpacity = useSharedValue(0);
   const headerY = useSharedValue(-20);
@@ -74,26 +81,40 @@ export default function HomeScreen() {
   }));
 
   useEffect(() => {
-    headerOpacity.value = withTiming(1, { duration: 500 });
-    headerY.value = withSpring(0, { damping: 16 });
+    headerOpacity.value = withTiming(1, { duration: 120 });
+    headerY.value = withSpring(0, { damping: 28, stiffness: 460, mass: 0.6 });
 
     pulseScale.value = withRepeat(
       withSequence(
-        withTiming(1.4, { duration: 900 }),
-        withTiming(1, { duration: 900 }),
+        withTiming(1.16, { duration: 520 }),
+        withTiming(1, { duration: 520 }),
       ),
       -1,
     );
     pulseOpacity.value = withRepeat(
       withSequence(
-        withTiming(0.25, { duration: 900 }),
-        withTiming(0.6, { duration: 900 }),
+        withTiming(0.35, { duration: 520 }),
+        withTiming(0.55, { duration: 520 }),
       ),
       -1,
     );
   }, []);
 
-  const recentSpecies = SPECIES_DATA.slice(0, 6);
+  useEffect(() => {
+    api.species.list()
+      .then((rows) => setSpecies(rows.map(toSpecies)))
+      .catch(() => setSpecies(SPECIES_DATA));
+
+    if (token) {
+      refreshUser().catch(() => undefined);
+      api.challenges.list()
+        .then((rows) => setChallenges(rows.map(toChallenge)))
+        .catch(() => setChallenges(CHALLENGES));
+    }
+  }, [token]);
+
+  const currentUser = user ? getUserStats(user) : CURRENT_USER;
+  const recentSpecies = species.slice(0, 6);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -106,7 +127,7 @@ export default function HomeScreen() {
         {/* Header */}
         <Animated.View style={[styles.header, headerStyle]}>
           <View>
-            <Text style={styles.greeting}>Hello, {CURRENT_USER.name.split(' ')[0]}!</Text>
+            <Text style={styles.greeting}>Hello, {currentUser.name.split(' ')[0]}!</Text>
             <Text style={styles.subGreeting}>What will you discover today?</Text>
           </View>
           <TouchableOpacity style={styles.bellBtn}>
@@ -115,11 +136,11 @@ export default function HomeScreen() {
         </Animated.View>
 
         {/* Stats Row */}
-        <Animated.View entering={FadeInDown.delay(200).springify()} style={styles.statsRow}>
+        <Animated.View entering={FadeInDown.delay(40).duration(110)} style={styles.statsRow}>
           {[
-            { value: CURRENT_USER.speciesCount.toString(), label: 'Species' },
-            { value: CURRENT_USER.points.toLocaleString(), label: 'Points' },
-            { value: `#${CURRENT_USER.rank}`, label: 'Rank' },
+            { value: currentUser.speciesCount.toString(), label: 'Species' },
+            { value: currentUser.points.toLocaleString(), label: 'Points' },
+            { value: currentUser.rank ? `#${currentUser.rank}` : '-', label: 'Rank' },
           ].map((s) => (
             <View key={s.label} style={styles.statItem}>
               <Text style={styles.statValue}>{s.value}</Text>
@@ -130,7 +151,7 @@ export default function HomeScreen() {
 
         {/* Capture CTA */}
         <Animated.View
-          entering={FadeInDown.delay(300).springify()}
+          entering={FadeInDown.delay(70).duration(110)}
           style={styles.captureSection}
         >
           <TouchableOpacity
@@ -147,7 +168,7 @@ export default function HomeScreen() {
         </Animated.View>
 
         {/* Recent Discoveries */}
-        <Animated.View entering={FadeInDown.delay(350).springify()}>
+        <Animated.View entering={FadeInDown.delay(90).duration(100)}>
           <Text style={styles.sectionTitle}>Recent Discoveries Nearby</Text>
         </Animated.View>
 
@@ -161,7 +182,7 @@ export default function HomeScreen() {
             return (
               <Animated.View
                 key={sp.id}
-                entering={FadeInRight.delay(400 + i * 60).springify()}
+                entering={FadeInRight.delay(100 + i * 18).duration(100)}
               >
                 <TouchableOpacity
                   style={[styles.card, Shadow.sm]}
@@ -180,14 +201,14 @@ export default function HomeScreen() {
         </ScrollView>
 
         {/* Challenges */}
-        <Animated.View entering={FadeInDown.delay(500).springify()}>
+        <Animated.View entering={FadeInDown.delay(130).duration(110)}>
           <Text style={[styles.sectionTitle, { marginTop: 20 }]}>Active Challenges</Text>
-          {CHALLENGES.map((ch, i) => {
+          {challenges.map((ch, i) => {
             const Icon = CHALLENGE_ICON[ch.iconName] ?? Trophy;
             return (
               <Animated.View
                 key={ch.id}
-                entering={FadeInDown.delay(560 + i * 80).springify()}
+                entering={FadeInDown.delay(150 + i * 20).duration(100)}
                 style={[styles.challengeCard, Shadow.sm, { backgroundColor: ch.bgColor }]}
               >
                 <View style={styles.challengeTop}>
@@ -197,7 +218,7 @@ export default function HomeScreen() {
                 <View style={styles.challengeBottom}>
                   <ProgressBar
                     progress={ch.progress / ch.total}
-                    delay={600 + i * 80}
+                    delay={120 + i * 20}
                   />
                   <Text style={styles.challengeProgress}>
                     {ch.progress}/{ch.total}

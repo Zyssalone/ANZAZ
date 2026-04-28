@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -35,7 +35,10 @@ import { StatusBar } from 'expo-status-bar';
 import { Colors, Shadow, Radius, Spacing } from '../theme';
 import StatusBadge from '../components/StatusBadge';
 import { SPECIES_DATA } from '../data/mockData';
+import type { Species } from '../data/mockData';
 import type { RootStackParamList } from '../types/navigation';
+import { api } from '../utils/api';
+import { toSpecies } from '../utils/mappers';
 
 type RouteType = RouteProp<RootStackParamList, 'SpeciesDetail'>;
 
@@ -64,7 +67,9 @@ export default function SpeciesDetailScreen() {
   const navigation = useNavigation<any>();
   const route = useRoute<RouteType>();
 
-  const species = SPECIES_DATA.find((s) => s.id === route.params.speciesId) ?? SPECIES_DATA[0];
+  const [species, setSpecies] = useState<Species>(
+    SPECIES_DATA.find((s) => s.id === route.params.speciesId) ?? SPECIES_DATA[0],
+  );
   const Icon = CATEGORY_ICON[species.category] ?? Leaf;
   const iconColor = CATEGORY_COLOR[species.category] ?? Colors.primary;
 
@@ -77,9 +82,15 @@ export default function SpeciesDetailScreen() {
   }));
 
   useEffect(() => {
-    imgY.value = withSpring(0, { damping: 18 });
-    imgOpacity.value = withTiming(1, { duration: 400 });
+    imgY.value = withSpring(0, { damping: 28, stiffness: 480, mass: 0.6 });
+    imgOpacity.value = withTiming(1, { duration: 120 });
   }, []);
+
+  useEffect(() => {
+    api.species.get(route.params.speciesId)
+      .then((row) => setSpecies(toSpecies(row)))
+      .catch(() => undefined);
+  }, [route.params.speciesId]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -104,7 +115,7 @@ export default function SpeciesDetailScreen() {
         </Animated.View>
 
         {/* Species name + status */}
-        <Animated.View entering={FadeInDown.delay(100).springify()} style={styles.nameSection}>
+        <Animated.View entering={FadeInDown.delay(40).duration(100)} style={styles.nameSection}>
           <View style={styles.nameRow}>
             <View style={{ flex: 1 }}>
               <Text style={styles.speciesName}>{species.commonName}</Text>
@@ -115,7 +126,7 @@ export default function SpeciesDetailScreen() {
         </Animated.View>
 
         {/* Facts grid */}
-        <Animated.View entering={FadeInDown.delay(160).springify()} style={styles.factsGrid}>
+        <Animated.View entering={FadeInDown.delay(70).duration(100)} style={styles.factsGrid}>
           {species.facts.map(({ label, value }, i) => (
             <View key={label} style={styles.factCard}>
               <Text style={styles.factLabel}>{label}</Text>
@@ -125,13 +136,13 @@ export default function SpeciesDetailScreen() {
         </Animated.View>
 
         {/* Description */}
-        <Animated.View entering={FadeInDown.delay(220).springify()} style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(100).duration(100)} style={styles.section}>
           <Text style={styles.sectionTitle}>Description</Text>
           <Text style={styles.descText}>{species.description}</Text>
         </Animated.View>
 
         {/* Habitat */}
-        <Animated.View entering={FadeInDown.delay(270).springify()} style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(120).duration(100)} style={styles.section}>
           <Text style={styles.sectionTitle}>Habitat</Text>
           <View style={styles.habitatBox}>
             <MapPin size={16} color={Colors.textMuted} strokeWidth={1.75} />
@@ -140,7 +151,7 @@ export default function SpeciesDetailScreen() {
         </Animated.View>
 
         {/* Distribution map placeholder */}
-        <Animated.View entering={FadeInDown.delay(310).springify()} style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(140).duration(100)} style={styles.section}>
           <Text style={styles.sectionTitle}>Habitat Range</Text>
           <View style={styles.mapPlaceholder}>
             <Map size={28} color={Colors.textLight} strokeWidth={1.5} />
@@ -149,7 +160,7 @@ export default function SpeciesDetailScreen() {
         </Animated.View>
 
         {/* Community Sightings */}
-        <Animated.View entering={FadeInDown.delay(360).springify()} style={styles.section}>
+        <Animated.View entering={FadeInDown.delay(160).duration(100)} style={styles.section}>
           <Text style={styles.sectionTitle}>
             Community Sightings ({species.sightings})
           </Text>
@@ -157,7 +168,7 @@ export default function SpeciesDetailScreen() {
             {COMMUNITY_SIGHTINGS.map((_, i) => (
               <Animated.View
                 key={i}
-                entering={FadeInRight.delay(400 + i * 40).springify()}
+                entering={FadeInRight.delay(170 + i * 14).duration(90)}
                 style={styles.sightingThumb}
               >
                 <View style={[styles.sightingImgBg, { backgroundColor: iconColor + '15' }]}>
@@ -172,7 +183,7 @@ export default function SpeciesDetailScreen() {
         </Animated.View>
 
         {/* CTA */}
-        <Animated.View entering={FadeInDown.delay(440).springify()} style={styles.ctaWrap}>
+        <Animated.View entering={FadeInDown.delay(190).duration(100)} style={styles.ctaWrap}>
           <TouchableOpacity
             style={styles.ctaBtn}
             activeOpacity={0.85}

@@ -77,32 +77,31 @@ export default function CaptureScreen() {
   useEffect(() => {
     scanY.value = withRepeat(
       withSequence(
-        withTiming(VIEWFINDER / 2, { duration: 2200, easing: Easing.inOut(Easing.sin) }),
-        withTiming(-VIEWFINDER / 2, { duration: 2200, easing: Easing.inOut(Easing.sin) }),
+        withTiming(VIEWFINDER / 2, { duration: 900, easing: Easing.linear }),
+        withTiming(-VIEWFINDER / 2, { duration: 900, easing: Easing.linear }),
       ),
       -1,
     );
 
     cornerOpacity.value = withRepeat(
       withSequence(
-        withTiming(1, { duration: 800 }),
-        withTiming(0.5, { duration: 800 }),
+        withTiming(0.85, { duration: 260 }),
+        withTiming(0.65, { duration: 260 }),
       ),
       -1,
       true,
     );
 
-    bottomY.value = withDelay(200, withSpring(0, { damping: 18 }));
-    bottomOpacity.value = withDelay(200, withTiming(1, { duration: 400 }));
+    bottomY.value = withDelay(60, withSpring(0, { damping: 28, stiffness: 440, mass: 0.65 }));
+    bottomOpacity.value = withDelay(60, withTiming(1, { duration: 120 }));
   }, []);
 
   const handleCapture = () => {
     if (isCapturing) return;
     setIsCapturing(true);
     captureBtnScale.value = withSequence(
-      withSpring(0.85, { damping: 12 }),
-      withSpring(1.1, { damping: 12 }),
-      withSpring(1, { damping: 14 }),
+      withSpring(0.92, { damping: 24, stiffness: 560, mass: 0.5 }),
+      withSpring(1, { damping: 26, stiffness: 620, mass: 0.5 }),
     );
     setTimeout(() => {
       navigation.navigate('Result', { speciesId: '1' });
@@ -149,14 +148,14 @@ export default function CaptureScreen() {
         </View>
 
         {/* Hint */}
-        <Animated.View entering={FadeIn.delay(600)} style={styles.hintRow}>
+        <Animated.View entering={FadeIn.delay(120).duration(100)} style={styles.hintRow}>
           <Text style={styles.hintText}>Point at a species to identify</Text>
         </Animated.View>
 
         {/* Bottom Controls */}
         <Animated.View style={[styles.bottomPanel, bottomStyle]}>
           {/* Filters */}
-          <Animated.View entering={FadeInUp.delay(300)} style={styles.filterRow}>
+          <Animated.View entering={FadeInUp.delay(80).duration(110)} style={styles.filterRow}>
             {FILTERS.map(({ icon: Icon, label, key }) => (
               <TouchableOpacity
                 key={key}

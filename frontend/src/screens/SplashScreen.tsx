@@ -48,28 +48,28 @@ export default function SplashScreen({ navigation }: Props) {
   }));
 
   useEffect(() => {
-    logoOpacity.value = withTiming(1, { duration: 500 });
-    logoScale.value = withSpring(1, { damping: 14, stiffness: 120 });
+    logoOpacity.value = withTiming(1, { duration: 120 });
+    logoScale.value = withSpring(1, { damping: 26, stiffness: 520, mass: 0.55 });
 
     ringOpacity.value = withDelay(
-      400,
+      80,
       withSequence(
-        withTiming(0.4, { duration: 600 }),
-        withTiming(0, { duration: 600 }),
+        withTiming(0.3, { duration: 120 }),
+        withTiming(0, { duration: 160 }),
       ),
     );
     ringScale.value = withDelay(
-      400,
-      withTiming(1.6, { duration: 1200, easing: Easing.out(Easing.cubic) }),
+      80,
+      withTiming(1.25, { duration: 240, easing: Easing.out(Easing.cubic) }),
     );
 
-    titleOpacity.value = withDelay(500, withTiming(1, { duration: 500 }));
-    titleY.value = withDelay(500, withSpring(0, { damping: 16 }));
-    subtitleOpacity.value = withDelay(800, withTiming(1, { duration: 500 }));
+    titleOpacity.value = withDelay(110, withTiming(1, { duration: 120 }));
+    titleY.value = withDelay(110, withSpring(0, { damping: 28, stiffness: 500, mass: 0.55 }));
+    subtitleOpacity.value = withDelay(180, withTiming(1, { duration: 120 }));
 
     const timer = setTimeout(() => {
       navigation.replace('Auth');
-    }, 2600);
+    }, 1200);
     return () => clearTimeout(timer);
   }, []);
 

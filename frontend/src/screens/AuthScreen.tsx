@@ -9,6 +9,8 @@ import {
   Platform,
   ScrollView,
   Dimensions,
+  Alert,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, {
   useSharedValue,
@@ -22,6 +24,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Colors, Radius, Shadow, Spacing } from '../theme';
 import type { StackScreenProps } from '@react-navigation/stack';
 import type { RootStackParamList } from '../types/navigation';
+import { useAuth } from '../context/AuthContext';
 
 type Props = StackScreenProps<RootStackParamList, 'Auth'>;
 
@@ -29,11 +32,14 @@ const { height } = Dimensions.get('window');
 const TABS = ['Log In', 'Sign Up'] as const;
 
 export default function AuthScreen({ navigation }: Props) {
+  const { login, register } = useAuth();
   const [activeTab, setActiveTab] = useState<0 | 1>(0);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [tabRowWidth, setTabRowWidth] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   const cardY = useSharedValue(80);
   const cardOpacity = useSharedValue(0);
@@ -45,31 +51,80 @@ export default function AuthScreen({ navigation }: Props) {
     opacity: cardOpacity.value,
   }));
 
+  const tabIndicatorWidth = tabRowWidth > 0 ? (tabRowWidth - 6) / 2 : 0;
+
   const indicatorStyle = useAnimatedStyle(() => ({
+    width: tabIndicatorWidth,
     transform: [{ translateX: tabIndicatorX.value }],
-  }));
+  }), [tabIndicatorWidth]);
 
   const btnStyle = useAnimatedStyle(() => ({
     transform: [{ scale: btnScale.value }],
   }));
 
   useEffect(() => {
-    cardY.value = withDelay(100, withSpring(0, { damping: 18, stiffness: 120 }));
-    cardOpacity.value = withDelay(100, withTiming(1, { duration: 400 }));
+    cardY.value = withDelay(40, withSpring(0, { damping: 28, stiffness: 420, mass: 0.65 }));
+    cardOpacity.value = withDelay(40, withTiming(1, { duration: 120 }));
   }, []);
+
+  useEffect(() => {
+    tabIndicatorX.value = activeTab === 0 ? 0 : tabIndicatorWidth;
+  }, [activeTab, tabIndicatorWidth]);
 
   const switchTab = (idx: 0 | 1) => {
     setActiveTab(idx);
-    tabIndicatorX.value = withSpring(idx === 0 ? 0 : 148, { damping: 16, stiffness: 200 });
+    tabIndicatorX.value = withSpring(idx === 0 ? 0 : tabIndicatorWidth, { damping: 26, stiffness: 520, mass: 0.55 });
   };
 
-  const handleAuth = () => {
-    btnScale.value = withSpring(0.95, { damping: 12 }, () => {
-      btnScale.value = withSpring(1, { damping: 12 });
+  const handleAuth = async () => {
+    if (loading) return;
+    const cleanEmail = email.trim();
+    const cleanName = name.trim();
+
+    if (!cleanEmail.includes('@')) {
+      Alert.alert('Check your email', 'Enter a valid email address.');
+      return;
+    }
+    if (password.length < 6) {
+      Alert.alert('Check your password', 'Password must be at least 6 characters.');
+      return;
+    }
+    if (activeTab === 1 && cleanName.length < 2) {
+      Alert.alert('Check your name', 'Enter your full name before creating an account.');
+      return;
+    }
+
+    btnScale.value = withSpring(0.97, { damping: 24, stiffness: 520, mass: 0.5 }, () => {
+      btnScale.value = withSpring(1, { damping: 26, stiffness: 560, mass: 0.5 });
     });
-    setTimeout(() => {
+
+    try {
+      setLoading(true);
+      if (activeTab === 0) {
+        await login(cleanEmail, password);
+      } else {
+        await register(cleanName, cleanEmail, password);
+      }
       navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
-    }, 200);
+    } catch (error) {
+      Alert.alert('Auth failed', error instanceof Error ? error.message : 'Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    setEmail('zyad@anzaz.app');
+    setPassword('demo1234');
+    try {
+      setLoading(true);
+      await login('zyad@anzaz.app', 'demo1234');
+      navigation.reset({ index: 0, routes: [{ name: 'Main' }] });
+    } catch (error) {
+      Alert.alert('Demo login failed', error instanceof Error ? error.message : 'Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -93,8 +148,13 @@ export default function AuthScreen({ navigation }: Props) {
           showsVerticalScrollIndicator={false}
         >
           <Animated.View style={[styles.card, cardStyle, Shadow.lg]}>
-            <View style={styles.tabRow}>
-              <Animated.View style={[styles.tabIndicator, indicatorStyle]} />
+            <View
+              style={styles.tabRow}
+              onLayout={(event) => setTabRowWidth(event.nativeEvent.layout.width)}
+            >
+              {tabIndicatorWidth > 0 && (
+                <Animated.View style={[styles.tabIndicator, indicatorStyle]} />
+              )}
               {TABS.map((t, i) => (
                 <TouchableOpacity
                   key={t}
@@ -164,10 +224,16 @@ export default function AuthScreen({ navigation }: Props) {
                   onPress={handleAuth}
                   activeOpacity={0.85}
                 >
-                  <Text style={styles.primaryBtnText}>
-                    {activeTab === 0 ? 'Log In' : 'Create Account'}
-                  </Text>
-                  <ArrowRight size={18} color="#fff" strokeWidth={2} />
+                  {loading ? (
+                    <ActivityIndicator color="#fff" />
+                  ) : (
+                    <>
+                      <Text style={styles.primaryBtnText}>
+                        {activeTab === 0 ? 'Log In' : 'Create Account'}
+                      </Text>
+                      <ArrowRight size={18} color="#fff" strokeWidth={2} />
+                    </>
+                  )}
                 </TouchableOpacity>
               </Animated.View>
 
@@ -177,8 +243,8 @@ export default function AuthScreen({ navigation }: Props) {
                 <View style={styles.dividerLine} />
               </View>
 
-              <TouchableOpacity style={styles.googleBtn} activeOpacity={0.8} onPress={handleAuth}>
-                <Text style={styles.googleBtnText}>Google</Text>
+              <TouchableOpacity style={styles.googleBtn} activeOpacity={0.8} onPress={handleDemoLogin}>
+                <Text style={styles.googleBtnText}>Demo account</Text>
               </TouchableOpacity>
             </View>
 
@@ -238,7 +304,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 3,
     left: 3,
-    width: 148,
     height: 38,
     backgroundColor: '#fff',
     borderRadius: 10,
