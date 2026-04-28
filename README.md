@@ -105,7 +105,7 @@ The application exists in **dual mode**:
 │         (PostgreSQL with Relational Schema)             │
 │  - Tables: users, species, sightings, challenges, etc.  │
 │  - Relationships: Foreign keys, indexes, constraints    │
-│  - PostGIS Support: Geographic queries (optional)       │
+│  - PostGIS Support: Geographic queries                  │
 └─────────────────────────────────────────────────────────┘
 ```
 
