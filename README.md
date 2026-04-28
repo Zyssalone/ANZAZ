@@ -22,7 +22,7 @@ By [**Aya Alami**](https://github.com/ayaa14?), [**Nizar El Ghanbaz**](https://g
 ---
 
 <p align="center">
-  <img src="./assets/demo.gif" alt="ANZAZ demo" height="300"/>
+  <img src="./assets/demo2.gif" alt="ANZAZ demo" height="300"/>
 </p>
 
 ## Project Overview
