@@ -38,6 +38,7 @@ By **Aya Alami**, **Nizar El Ghanbaz**, **Zyad Serghini**
 ### Current State
 
 The application exists in **dual mode**:
+
 - **Frontend:** Fully functional with mock data (no backend required for testing)
 - **Backend:** Express.js API + PostgreSQL (ready for deployment)
 - **Integration:** Frontend can switch between mock data and live API via configuration
