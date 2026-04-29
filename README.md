@@ -20,11 +20,6 @@ By [**Aya Alami**](https://github.com/ayaa14?), [**Nizar El Ghanbaz**](https://g
 10. [Deployment & Configuration](#deployment--configuration)
 
 ---
-
-<p align="center">
-  <img src="./assets/demo2.gif" alt="ANZAZ demo" height="300"/>
-</p>
-
 ## Project Overview
 
 **ANZAZ** is a mobile biodiversity tracking application that enables users to:
